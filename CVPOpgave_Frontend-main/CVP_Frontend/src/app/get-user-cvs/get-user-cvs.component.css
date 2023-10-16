@@ -1,0 +1,42 @@
+h5{
+    cursor: pointer;
+    color:rgb(69, 46, 218);
+}
+
+h3{
+    cursor: pointer;
+    color:rgb(69, 46, 218);
+}
+
+h6{
+  color:rgb(69, 46, 218);
+}
+
+h5:hover{
+    opacity: 0.8;
+}
+.view {
+    width: 37% !important;
+    
+  }
+  
+  .split-view-container {
+    display: flex; 
+    align-self: stretch;
+    justify-content: 0%;
+    
+  } 
+
+  input[type=button]{
+    width: 20px;
+    padding-bottom: 100px;
+  }
+
+ /* button.inputPrintPDF{
+    width: 100px !important;
+    padding-bottom: 30px !important;
+  }*/
+
+  td{
+    width: 170px;
+  }

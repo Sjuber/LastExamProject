@@ -1,0 +1,328 @@
+<div *ngIf="userLoggedIn"><h1>Oprettede CV'er</h1>
+<h3>{{ noCVsMessage }}</h3>
+<br>
+<div class="split-view-container">
+  <div class="view" >
+    <div *ngFor="let cv of originalCVs">
+      <div *ngIf="cv.cvStateString == published">
+        <input
+          type="checkbox"
+          style="display: inline"
+          (change)="onCheckboxChange($event, cv)"
+        />
+        <h5 (click)="showOriginalCV(cv)" style="display: inline">
+          CV - {{cv.title}}
+        </h5>
+      </div>
+    </div>
+    <div *ngFor="let cv of originalCVs">
+      <div *ngIf="cv.cvStateString == inDraft">
+        <input
+          type="checkbox"
+          style="display: inline"
+          (change)="onCheckboxChange($event, cv)"
+        />
+        <h5
+          *ngIf="cv.cvStateString == inDraft"
+          (click)="showOriginalCV(cv)"
+          style="display: inline"
+        >
+          CV - {{cv.title}}
+          <h6 style="display: inline" *ngIf="cv.cvStateString == inDraft">
+            (kladde)
+          </h6>
+        </h5>
+      </div>
+    </div>
+
+    <div *ngFor="let cv of originalCVs">
+      <div *ngIf="cv.cvStateString == archived">
+        <input
+          type="checkbox"
+          style="display: inline"
+          (change)="onCheckboxChange($event, cv)"
+        />
+        <h5
+          *ngIf="cv.cvStateString == archived"
+          (click)="showOriginalCV(cv)"
+          style="display: inline"
+        >
+          CV - {{cv.title}}
+          <h6 style="display: inline" *ngIf="cv.cvStateString == archived">
+            (arkiveret)
+          </h6>
+        </h5>
+      </div>
+    </div>
+    <br />
+    <div *ngIf="originalCVs.length != 0">
+      <button (click)="setCVStateToArchived()">Arkivér</button>
+      <br />
+      <button (click)="setCVStateToPublished()">Offentliggør</button>
+      <br />
+      <button
+        style="color: whitesmoke; background-color: brown"
+        (click)="deleteCVs()"
+      >
+        Slet
+      </button>
+    </div>
+  </div>
+ <div class="view">
+
+   
+   <div *ngIf="originalCV">
+    <button placeholder="Print CV" style="text-align: right;" (click)="print_A_CV_As_PDF()">Klik her for at lave et CV</button>
+     <h2>
+      {{originalCV.title}}
+      <h6 style="display: inline" *ngIf="originalCV.cvStateString == inDraft">
+        (kladde)
+      </h6>
+      <h6 style="display: inline" *ngIf="originalCV.cvStateString == archived">
+        (arkiveret)
+      </h6>
+    </h2>
+    <h6>Profil af {{ originalCV.consultantDTO?.name }}</h6>
+
+
+    
+    <br />
+
+    <br />
+
+    <!-- AVAILABLE BLOCK -->
+    <p style="font-weight: bold; display: inline">
+      Rådighedstimer:
+      {{ originalCV.maxHours - originalCV.bookedHours }} ugentligt
+    </p>
+    <p style="display: inline">
+      (Arbejder pt. {{ originalCV.bookedHours }}/{{ originalCV.maxHours }}
+      ugentlige arbejdstimer)
+    </p>
+    <!-- AVAILABLE BLOCK END -->
+
+    <br />
+
+    <br />
+
+    <!-- PERSONALITY BLOCK -->
+    <p style="font-weight: bold">Personlige egenskaber:</p>
+    <p>{{ originalCV.description }}</p>
+    <!-- PERSONALITY BLOCK END -->
+
+    <!-- EXPERIENCE BLOCK -->
+    <p style="font-weight: bold">Tekniske erfaring:</p>
+    <p>{{ originalCV.techBackground }}</p>
+    <!-- EXPERIENCE BLOCK END-->
+
+  
+
+    <!-- COMPETENCES BLOCK -->
+    <div
+      *ngIf="
+        originalCV.cv_knowledgeList && originalCV.cv_knowledgeList.length > 0
+      "
+    >
+      <br />
+    <br />
+      <h6 style="font-weight: bold">Kompetencer</h6>
+      <table>
+        <tr>
+          <th>Kompetence</th>
+          <th>Niveau</th>
+          <th>Års erfaring</th>
+        </tr>
+        <tr *ngFor="let cvKnowledge of originalCV.cv_knowledgeList">
+          <td *ngIf="cvKnowledge.knowledge.name">
+            {{ cvKnowledge.knowledge.name }}
+          </td>
+          <td *ngIf="!cvKnowledge.knowledge.name">{{ cvKnowledge.note }}</td>
+          <td>{{ cvKnowledge.levelSkill }}</td>
+          <td>{{ cvKnowledge.years }}</td>
+        </tr>
+      </table>
+    </div>
+    <!-- COMPETENCES BLOCK END-->
+
+   
+
+    <!-- JOBS BLOCK -->
+    <div *ngIf="originalCV.jobs.length != 0">
+       <br />
+    <br />
+      <h6 style="font-weight: bold">Ansættelser</h6>
+      <table>
+        <tr>
+          <th>Jobtitel</th>
+          <th>Firma</th>
+          <th>Start måned</th>
+          <th>Slut måned</th>
+        </tr>
+        <tr *ngFor="let job of originalCV.jobs">
+          <td>{{ job.title }}</td>
+          <td>{{ job.company.name }}</td>
+          <td>{{ formattingMonth(job.startDate) }}</td>
+          <td>
+            <div *ngIf="job.endDate != null">
+              {{ formattingMonth(job.endDate) }}
+            </div>
+            <div *ngIf="job.endDate == null">-</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!-- JOBS BLOCK END-->
+
+    
+
+    <!-- EDUCATION BLOCK -->
+    <div *ngIf="originalCV.educations.length != 0">
+      <br />
+      <br />
+      <h6 style="font-weight: bold">Uddannelser:</h6>
+      <table>
+        <tr>
+          <th>Titel</th>
+          <th>Start år</th>
+          <th>Slut år</th>
+        </tr>
+        <tr *ngFor="let education of originalCV.educations">
+          <td>{{ education.title }}</td>
+          <td>{{ education.startYear }}</td>
+          <td>{{ education.endYear }}</td>
+        </tr>
+        <br />
+      </table>
+    </div>
+    <!-- EDUCATION BLOCK END-->
+
+   
+
+    <!-- LANGUAGE BLOCK -->
+    <div *ngIf="originalCV.practisedLanguages.length != 0">
+       <br />
+    <br />
+    <h6 style="font-weight: bold">Sprogfærdigheder (kommunikation):</h6>
+      <table>
+        <tr>
+          <th>Sprog</th>
+          <th>Skriftligt</th>
+          <th>Mundligt</th>
+        </tr>
+        <tr *ngFor="let practisedLanguage of originalCV.practisedLanguages">
+          <td>{{ practisedLanguage.name }}</td>
+          <td>{{ practisedLanguage.levelWritting }}</td>
+          <td>{{ practisedLanguage.levelReading }}</td>
+        </tr>
+      </table>
+    </div>
+    <!-- LANGUAGE BLOCK END-->
+
+   
+
+    <!-- COURSES BLOCK -->
+    <div *ngIf="originalCV.coursesCertifications.length != 0">
+      <br />
+       <br />
+      <h6 style="font-weight: bold">Kurser og certificeringer:</h6>
+      <table>
+        <tr>
+          <th>Titel</th>
+          <th>Start dato</th>
+          <th>Slut dato</th>
+        </tr>
+        <tr
+          *ngFor="let courseCertification of originalCV.coursesCertifications"
+        >
+          <td>{{ courseCertification.title }}</td>
+          <td>{{ formattingDate(courseCertification.startDate) }}</td>
+          <td>{{ formattingDate(courseCertification.endDate) }}</td>
+        </tr>
+        <br />
+      </table>
+    </div>
+    <!-- COURSES BLOCK END-->
+
+   
+
+    <!-- PROJECTS BLOCK -->
+    <div *ngIf="originalCV.projects?.length != 0">
+      <br />
+       <br />
+      <h4 style="font-weight: bold">Projekter:</h4>
+      <br />
+      <div *ngFor="let project of originalCV.projects; index as i">
+        <div style="text-align: center">
+          ------------------------------------ Projekt
+          {{ i + 1 }} ------------------------------------
+        </div>
+        <table>
+          <tr>
+            <th>Beskrivelse:</th>
+          </tr>
+          <tr>
+            <td>{{ project.description }}</td>
+          </tr>
+          <tr>
+            <td><br /></td>
+          </tr>
+          <tr>
+            <th>Kompetencer:</th>
+          </tr>
+          <tr>
+            <td>
+              <div
+                *ngFor="let project_knowledge of project.projectknowledgeList"
+              >
+                <li *ngIf="project_knowledge.knowledge.name == null">
+                  {{ project_knowledge.knowledge.knowCategoryDTO.name }} -
+                  {{ project_knowledge.note }}
+                </li>
+                <li *ngIf="project_knowledge.knowledge.name != null">
+                  {{ project_knowledge.knowledge.name }}
+                </li>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><br /></td>
+          </tr>
+          <tr>
+            <th>Firma</th>
+            <th>Evt. broker</th>
+            <th>Start dato</th>
+            <th>Slut dato</th>
+            <th>Rolle i projektet</th>
+          </tr>
+          <tr>
+            <td>{{ project.customer.name }}</td>
+            <td>{{ project.broker?.name }}</td>
+            <td>{{ formattingDate(project.dateStart) }}</td>
+            <td>
+              <div *ngIf="project.dateEnd != null">
+                {{ formattingDate(project.dateEnd) }}
+              </div>
+              <div *ngIf="project.dateEnd == null">-</div>
+            </td>
+            <td>{{ project.roleForProject }}</td>
+          </tr>
+          <tr>
+            <br />
+          </tr>
+          <tr></tr>
+          <tr>
+            <br />
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- PROJECTS BLOCK -->
+
+    <br />
+    <br />
+    
+ </div>
+  </div>
+</div>
+</div>
+

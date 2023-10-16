@@ -1,0 +1,41 @@
+<nav class="navbar navbar-dark bg-transparent">
+  <div class="nav-logo active">
+ <a class="navbar-brand"  >
+<h3 style="position: absolute; display: inline; padding: 0.3pc; left: 2.1pc; top: 0.05pc;" routerLink="/">CVP</h3>
+<img src="../assets/Miracle42Logo.png" routerLink="/" width="auto" height="90%" alt="Miracle42" style="position: absolute; display: inline; right: 2.5pc;">
+</a>
+  </div>
+</nav>
+<nav>
+  <ul class="navbar-dark bg-transparent navbar-nav mr-auto mt-2 mt-lg-0">
+    <div *ngIf="loggedIn">
+      <li class="nav-item" *ngIf="isSales">
+        <a class="nav-link"[routerLink]="['search_cvs']" style="float: left; display: inline; margin-right: 1pc;" >Søg konsulenter</a>
+      </li>
+    <li class="nav-item" *ngIf="isAdmin">
+      <a class="nav-link" [routerLink]="['add_user']" style="float: left; display: inline; margin-right: 1pc; "> Tilføj bruger (Admin)</a>
+    </li>
+    <li class="nav-item" *ngIf="isAdmin">
+      <a class="nav-link"[routerLink]="['get_users']" style="float: left; display: inline; margin-right: 1pc;  " > Se alle brugere (Admin)</a>
+    </li>
+     <a class="mr-auto mt-2 mt-lg-2">
+      <li class="nav-item">
+        <a class="nav-link name-logo"[routerLink]="['profile']" [state]="{user: userLoggedIn}" style="float: right;" >{{userName}}</a>
+      </li> 
+     </a>
+      <a class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" (click)="logOut()" [routerLink]="['']" style="float: right;">Log af</a>
+          </li> 
+        </a>
+       </div>
+        <a class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item" *ngIf="!loggedIn">
+      <a class="nav-link" [routerLink]="['login']" style="float: right;" alt="Log ind" onclick="document.getElementById('loginFormID')">Log ind</a>
+    </li>
+        </a>
+  </ul>
+</nav>
+<h3 id="httpError" style="color:brown; text-align: center;">{{serverError}}</h3>
+<router-outlet></router-outlet>
+

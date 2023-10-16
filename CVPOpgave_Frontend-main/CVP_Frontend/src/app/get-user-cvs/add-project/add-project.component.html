@@ -1,0 +1,140 @@
+<div *ngIf="cvForAddingProject != undefined">
+    <mat-dialog-actions>
+      <button
+        class="mat-raised-button cancelbtn"
+        style="background-color: grey !important"
+        (click)="close()"
+      >
+        X
+      </button>
+    </mat-dialog-actions>
+    <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px">
+      Tilføj projekt 
+    </h1>
+    <h6 id="httpErrorID" style="color: brown">{{ httpError }}</h6>
+    <div class="split-view-container">
+      <div>
+        <ol class="view" style="left: margin 10%">
+          <form
+            [formGroup]="cvAddProjectForm"
+            (ngSubmit)="onSubmitAddProject()"
+          style="width: 400px !important;">
+          <label style="font-weight: bold" for="description">
+            Beskrivelse:
+            <h6 id="descriptionError" style="color: brown">{{ descriptionError }}</h6>
+          </label>
+          <input type="text" formControlName="description">
+          <label style="font-weight: bold" for="startDate">
+            Start Dato:
+            <h6 id="startDateError" style="color: brown">{{ startDateError }}</h6>
+          </label>
+          <input type="date" formControlName="startDate">
+          <label style="font-weight: bold" for="endDate">
+                  Slut Dato:
+                  <h6 style="color: brown">{{ endDateError }}</h6>
+                </label>
+                <input type="date" formControlName="endDate">
+          <label style="font-weight: bold" for="role">
+                  Din rolle i projektet:
+                  <h6 id="roleError" style="color: brown">{{ roleError }}</h6>
+                </label>
+                <input type="text" formControlName="role">
+                <label style="font-weight: bold" for="customer">
+                    Kundens navn (firma):
+                    <h6 id="costumerError" style="color: brown">{{ costumerError }}</h6>
+                  </label>
+                  <input type="text" formControlName="customer">
+            <label style="font-weight: bold" for="broker">
+                    Evt. anden "mellemleds-firma":
+                    <h6 style="color: brown">{{ brokerError }}</h6>
+                  </label>
+                  <input type="text" formControlName="broker">
+            <div>
+                <label style="font-weight: bold" for="knowledgeName">
+                  Kompetencer:
+                  <h6 id="knowledgeNameError" style="color: brown">{{ knowledgeNameError }}</h6>
+                </label>
+                <!--Using ng-option and for loop-->
+                <div style="display: inline;">
+                <ng-select [(ngModel)]="knowledgeName" [ngModelOptions]="{standalone: true}" style="width:70%;">
+                  <div *ngFor="let knowlegde of allKnowledgeFromDB">
+                  <ng-option 
+                  [value]="knowlegde.name"
+                  *ngIf="knowlegde.knowCategoryDTO.name != 'Andet'">
+                    {{ knowlegde.name }} -
+                    {{ knowlegde.knowCategoryDTO.name }}
+                  </ng-option>
+                </div>
+                  <ng-option
+              [value]="'Andet'">
+                Andet
+              </ng-option>
+              </ng-select>
+            </div>
+           </div>
+                    <label *ngIf="knowledgeName=='Andet'" style="font-weight: bold; color: brown;"> Findes kompetencen ikke? </label>
+                    <label *ngIf="knowledgeName=='Andet'" style="font-weight: bold; color: brown;"> Skriv navn på kompetencen: </label>
+                    <input *ngIf="knowledgeName=='Andet'" id="note" type="text" formControlName="note" />
+                <button type="button" style="background-color: lightblue; height: 30px; width: 25%; padding-top: 1px; display: inline;" (click)="addCurrentKnowledgeForCurrentCV()">Tilføj</button>
+                <ol *ngFor="let project_knowledge of projectKnowledgeListForProject">
+                  <div *ngIf="project_knowledge.knowledge.name!=undefined"> {{project_knowledge.knowledge.name}} - {{project_knowledge.knowledge.knowCategoryDTO.name}}</div>
+                  <div *ngIf="project_knowledge.knowledge.name==undefined">{{project_knowledge.note}} - {{project_knowledge.knowledge.knowCategoryDTO.name}}</div>
+                    <button type="button" style="background-color: brown; color: white!important; width: 25px; height: 25px; padding-top: 0px;padding-left: 0.5pc;" (click)="removeKnowledgeForCurrentCV(project_knowledge.knowledge.name)">X</button>
+                </ol>
+           
+            <button style="width: 100%;" [disabled]="!cvAddProjectForm.valid" type="submit">Tilføj projekt</button>
+          </form>
+        </ol>
+      </div>
+      <div class="view">
+        <h4>Liste over projekter på dette CV:</h4>
+        <table
+          *ngIf="
+          cvForAddingProject.projects != null &&
+          cvForAddingProject.projects.length > 0
+          "
+        ><div *ngFor="let project of cvForAddingProject.projects">
+          <tr><th>Beskrivelse</th></tr>
+            <tr><td>{{ project.description }}</td></tr>
+            <tr><br> </tr>
+          <tr>
+            <th>Projektets kunde</th>
+            <th>Evt. broker</th>
+            <th>Rolle</th>
+            <th>Start dato</th>
+            <th>Slut dato</th>
+            <th>Kompetencer anvendt i projektet</th>
+            
+          </tr>
+          <tr>
+            <td>{{ project.customer.name }}</td>
+            <td>{{ project.broker?.name }}</td>
+            <td>{{ project.roleForProject }}</td>
+            <td>{{ formattingDate(project.dateStart) }}</td>
+            <td><div *ngIf="project.dateEnd != null">{{formattingDate(project.dateEnd)}}</div>
+              <div *ngIf="project.dateEnd == null">-</div></td>
+            <td>
+                <div *ngFor="let project_knowlegde of project.projectknowledgeList">
+                  <li *ngIf="project_knowlegde.knowledge.name!=undefined"> {{project_knowlegde.knowledge.name}}</li>
+                  <li *ngIf="project_knowlegde.knowledge.name==undefined">{{project_knowlegde.knowledge.knowCategoryDTO.name}} - {{project_knowlegde.note}}</li>
+                </div>
+            </td>
+            
+          </tr>
+          <tr><br> </tr>
+          ---------------------------------------------------------------------------
+          <tr><br> </tr>
+        </div>
+        </table>
+        <h6
+          *ngIf="
+          cvForAddingProject.projects != undefined &&
+          cvForAddingProject.projects.length == 0
+          "
+        >
+          (Tom)
+        </h6>
+      </div>
+    </div>
+  </div>
+  

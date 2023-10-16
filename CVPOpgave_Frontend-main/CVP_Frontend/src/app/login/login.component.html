@@ -1,0 +1,28 @@
+
+<div ng-app="Login" ng-controller="loginController">
+
+    <!-- <div id="loginFormID" class="modal"style="top:178px">
+        <span onclick="document.getElementById('loginFormID').style.display='none'"
+      class="close" title="Close Modal">&times;</span> -->
+      
+<form [formGroup]="loginCredentialsForm" (ngSubmit)="onSubmit()"style="background-color:#f1f1f1">
+  <h2 style="text-align: center;">Login</h2>
+   
+   <br>
+   <h5 style="color: brown; text-align: center;">{{loginError}}</h5>
+    <div class="container" >
+      <label for="email"><b>E-mail</b></label>
+      <input type="text" formControlName="email" required>
+  
+      <label for="pw"><b>Password</b></label>
+      <input type="password" formControlName="password" required>
+  
+      <button type="submit " class="loginBtn">Login</button>
+    </div>
+  
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" routerLink="/" class="cancelbtn">Annullér</button>
+    </div>
+  </form>
+</div>
+

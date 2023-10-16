@@ -1,0 +1,45 @@
+/* angular-cli file: src/styles.css
+@import "../node_modules/angular-calendar/css/angular-calendar.css"; */
+
+nav{
+     background-image: url('../assets/testerBackground.jpg');
+    background-color: rgb(91, 72, 214);
+    background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% auto;
+}
+footer{
+    margin-bottom: 0px;
+}
+ 
+.nav-item{
+  font-weight: bold ;
+  color: rgb(255, 255, 255);
+  padding-right: 40px;
+  padding-left: 40px;
+  
+}
+body{height: 100%;}
+.name-logo{
+  font-weight: bold ;
+  color: rgba(255, 255, 255)!important; 
+}
+
+.name-logo:hover{
+  color: rgba(255,255,255, 0.3)!important; 
+}
+
+.nav-link{
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-link:hover{
+  font-weight: bold ;
+  color: rgb(255, 255, 255);
+
+}
+h1{
+  color: rgb(69, 46, 218);
+}
+   

@@ -1,0 +1,38 @@
+<h1>Tilføj bruger</h1>
+<form [formGroup]="userAddForm" (ngSubmit)="onSubmit()" fxFlex fxLayout="column" autocomplete="off" style="margin: 30px">
+  <div>
+    <h6 style="color: brown;">{{errorName}}</h6>
+    <label style="font-weight: bold;" for="name">
+      Navn
+    </label>
+    <input id="name" type="text" formControlName="name" >
+  </div>
+  <h6 style="color: brown;">{{errorPhone}}</h6>
+  <div>
+    <label style="font-weight: bold;" for="phone">
+      Telefon nr.
+    </label>
+    <input id="phone" type="tel" formControlName="phone"  pattern="[0-9]{8}">
+  </div>
+  <h6 style="color: brown;">{{errorEmail}}</h6>
+  <div>
+    <label style="font-weight: bold;" for="email">
+      Email
+    </label>
+    <input id="email" type="email" formControlName="email"  >
+  </div>
+<h6 style="color: brown;">{{errormaxWeeklyHoursMessage}}</h6>
+  <div>
+    <label for="maxWeeklyHours">
+      <div style="font-weight: bold;">Hvor mange timer vil du arbejde om ugen i alt (max)?</div> 
+      <p>(Gælder i alt for alle arbejdsroller)</p>
+    </label>
+    <input id="maxWeeklyHours" type="number" formControlName="maxWeeklyHours">
+  </div>
+  <h6 style="color: brown;">{{errorRoles}}</h6>
+    <h4>Vælg roller:</h4>
+     <div *ngFor="let role of possibleRoles; index as i">
+    <p ><input id="roles" type="checkbox" (change)="onCheckboxChange($event)" [value]="role.title" formArrayName="roleTitles">{{role.title}}</p>
+  </div>
+  <button class="button" type="submit" [disabled]="!userAddForm.valid">Opret bruger</button>
+</form>

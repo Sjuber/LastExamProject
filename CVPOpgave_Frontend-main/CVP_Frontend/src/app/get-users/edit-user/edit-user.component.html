@@ -1,0 +1,62 @@
+<div *ngIf="userUpdateForm!=undefined && userToUpdate!= undefined">
+  <mat-dialog-actions>
+    <button style="background-color: grey;" class="mat-raised-button" (click)="close()">X</button>
+  </mat-dialog-actions>
+  <ol class="view" style="left: margin 10%;">
+    <form [formGroup]="userUpdateForm" (ngSubmit)="onSubmitUpdateUser()">
+      <div>
+
+        <label for="name" >
+          Navn<h6 style="color: brown;">{{errorName}}</h6>
+        </label>
+        <input id="name" type="text" formControlName="name">
+      </div>
+
+
+      <div>
+
+        <label for="phone" >
+          Telefon nr.<h6 style="color: brown;">{{errorPhone}}</h6>
+        </label>
+        <input id="phone" type="tel" formControlName="phone" pattern="[0-9]{8}">
+      </div>
+
+
+      <div>
+        <label for="email" >
+          Email <h6 style="color: brown;">{{errorEmail}}</h6>
+        </label>
+        <input id="email" type="email" formControlName="email">
+      </div>
+
+
+      <div >
+        <label for="maxWeeklyHours">
+          Max antal arbejdstimer pr. uge<h6 style="color: brown;">{{errormaxWeeklyHoursMessage}}</h6>
+        </label>
+        <input id="maxWeeklyHours" type="number" formControlName="maxWeeklyHours">
+      </div>
+      
+      <h4>Roller:</h4>
+      <h6 style="color: brown;">{{errorRoles}}</h6>
+      <div id="addRole" formGroupName="roleTitles">
+        <div *ngFor="let roleInfo of roleTitles.controls; let i = index;">
+          <div [formGroup]="roleInfo">
+            <p style="font-weight: bold;">{{roleInfo.controls.title.value}} </p>
+            <p>Startdato: <input type="date" formControlName="startDate"></p>
+            <h6 style="font-weight:lighter;" *ngIf="!roleInfo.controls.endDate.value">(Brugeren har ingen slutdato)</h6>
+            <p>Slutdato: <input type="date" formControlName="endDate"></p>
+            <p><input type="checkbox" (click)="removeRoleForCurrentUser(i, $event)">Slet</p>
+          </div>
+        </div>
+        <h6>Roller at tilføje:</h6>
+        <div *ngFor="let role of possibleRoles; let i = index;">
+          <p><input type="checkbox" (click)="addCurrentUserRole(i, $event)"> {{role.title}}</p>
+        </div>
+      </div>
+      <button [disabled]="!userUpdateForm.valid" type="submit">Opdatér bruger</button>
+    </form>
+
+
+  </ol>
+</div>

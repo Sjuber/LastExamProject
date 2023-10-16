@@ -1,0 +1,78 @@
+<div *ngIf="cvForEducationAdding != undefined">
+  <mat-dialog-actions>
+    <button
+      class="mat-raised-button cancelbtn"
+      style="background-color: grey !important"
+      (click)="close()"
+    >
+      X
+    </button>
+  </mat-dialog-actions>
+  <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px">
+    Tilføj uddannelse
+  </h1>
+  <h6 style="color: brown; text-align: center">{{ httpError }}</h6>
+  <div class="split-view-container">
+    <div>
+      <ol class="view" style="left: margin 10%">
+        <form
+          [formGroup]="cvAddEducationForm"
+          (ngSubmit)="onSubmitAddEducation()"
+        >
+          <div>
+            <label style="font-weight: bold" for="title">
+              Titel på uddannelse:
+              <h6 style="color: brown">{{ titleError }}</h6>
+            </label>
+            <input id="title" type="text" formControlName="title" />
+          </div>
+          <div>
+            <label style="font-weight: bold" for="dates">
+              I hvilken periode?
+              <h6 style="color: brown">{{ dateError }}</h6>
+            </label>
+            <p>
+              Start år:
+              <input type="number" min="1900" formControlName="startYear" />
+            </p>
+            <p>
+              Slut år:
+              <input type="number" min="1900" formControlName="endYear" />
+            </p>
+          </div>
+          <button [disabled]="!cvAddEducationForm.valid" type="submit">
+            Tilføj
+          </button>
+        </form>
+      </ol>
+    </div>
+    <div class="view">
+      <h4>Liste over uddannelser på dette CV:</h4>
+      <table
+        *ngIf="
+          cvForEducationAdding.educations != undefined &&
+          cvForEducationAdding.educations.length > 0
+        "
+      >
+        <tr>
+          <th>Titel</th>
+          <th>Start år</th>
+          <th>Slut år</th>
+        </tr>
+        <tr *ngFor="let education of cvForEducationAdding.educations">
+          <td>{{ education.title }}</td>
+          <td>{{ education.startYear }}</td>
+          <td>{{ education.endYear }}</td>
+        </tr>
+      </table>
+      <h6
+        *ngIf="
+          cvForEducationAdding.educations != undefined &&
+          cvForEducationAdding.educations.length == 0
+        "
+      >
+        (Tom)
+      </h6>
+    </div>
+  </div>
+</div>

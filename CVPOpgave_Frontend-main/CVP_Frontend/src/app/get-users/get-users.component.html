@@ -1,0 +1,50 @@
+<h1>Brugere i systemet</h1>
+<div class="split-view-container">
+  <table mat-table [dataSource]="currentUsers" class="mat-elevation-z8 demo-table">
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Navn</th>
+      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>E-mail</th>
+      <td mat-cell *matCellDef="let element">{{element.email}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>Telefon nr.</th>
+      <td mat-cell *matCellDef="let element">{{element.phone}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="maxWeeklyHours">
+      <th mat-header-cell *matHeaderCellDef>Antal arbejdstimer pr. uge max.</th>
+      <td mat-cell *matCellDef="let element">{{element.maxWeeklyHours}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row (click)="clickedRows.add(row)" [class.row-is-clicked]="clickedRows.has(row)"
+      *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <div *ngIf="clickedRows.size>0" class="view">
+    <ul>
+      <div>
+        <h3>
+          Brugere:
+        </h3>
+      </div>
+      <ul *ngFor="let clickedRow of clickedRows; let i = index" [attr.data-index]="i">
+        <h4> {{clickedRow.name}} <button style="border: 0.1px;" (click)="removeClickedRow(clickedRow)">✖️</button></h4>
+
+        <li *ngFor="let roleUser of clickedRow.userRoleDTOs">
+          <p>{{roleUser.roleDTO.title}} </p>
+          <p>- Startdato: d. {{roleUser.startDate | date: 'dd-MM-yyyy'}}</p>
+          <p *ngIf="roleUser.endDate != null">- Slutdato: d. {{roleUser.endDate | date: 'dd-MM-yyyy'}}</p>
+          <p *ngIf="roleUser.endDate == null">- Har ingen slutdato</p>
+        </li>
+        <button (click)="showUpdateForUser(clickedRow)">Redigér</button>
+      </ul>
+    </ul>
+    
+  </div>
+</div>

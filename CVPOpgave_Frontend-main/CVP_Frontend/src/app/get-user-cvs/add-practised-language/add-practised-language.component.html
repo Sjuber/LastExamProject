@@ -1,0 +1,63 @@
+<div *ngIf="cvForLanguageAdding!=undefined">
+    <mat-dialog-actions>
+       <button class="mat-raised-button cancelbtn" style="background-color: grey !important;" (click)="close()">X</button>
+     </mat-dialog-actions>
+     <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px;">Tilføj sprogkundskab (kommunkation)</h1>
+     <h6 style="color: brown; text-align: center;">{{cvError}}</h6>
+     <div class="split-view-container">
+         <div >
+     <ol class="view" style="left: margin 10%;">
+       <form [formGroup]="cvAddLanguageForm" (ngSubmit)="onSubmitAddLanguage()" >
+         <div>
+           <label style="font-weight: bold;" for="title" >
+             Sprog:<h6 style="color: brown;">{{nameError}}</h6>
+           </label>
+           <input id="name" type="text" formControlName="name">
+         </div>
+         <div>
+           <label style="font-weight: bold;">
+             Færdighed skriftligt:<h6 style="color: brown;">{{levelWrittingError}}</h6>
+           </label>
+           <select id="levelWritting" formControlName="levelWritting">
+            <option value="Begynder">Begynder</option>
+            <option value="God">God</option>
+            <option value="Flydende">Flydende</option>
+            <option value="Modersmål">Modersmål</option>
+          </select>
+           </div>  
+         <div >
+            <div>
+                <label style="font-weight: bold;">
+                  Færdighed mundligt:<h6 style="color: brown;">{{levelReadingError}}</h6>
+                </label>
+                <select id="levelReading" formControlName="levelReading">
+                    <option value="Begynder">Begynder</option>
+                    <option value="God">God</option>
+                    <option value="Flydende">Flydende</option>
+                    <option value="Modersmål">Modersmål</option>
+                  </select>
+            </div> 
+        </div>  
+              
+         <button [disabled]="!cvAddLanguageForm.valid" type="submit">Tilføj</button>
+       </form>
+     </ol>
+         </div>
+         <div class="view">
+             <h4>Liste over sprogkundskaber på dette CV:</h4>
+             <table *ngIf="cvForLanguageAdding.practisedLanguages != undefined && cvForLanguageAdding.practisedLanguages.length >0">
+               <tr>
+                   <th>Sprog</th>
+                   <th>Skriftligt</th>
+                   <th>Mundligt</th>
+               </tr>
+               <tr *ngFor="let language of cvForLanguageAdding.practisedLanguages">
+                 <td>{{language.name}}</td>
+                 <td>{{language.levelWritting}}</td>
+             <td>{{language.levelReading}}</td>
+             </tr>
+             </table>
+       <h6 *ngIf="cvForLanguageAdding.practisedLanguages != undefined && cvForLanguageAdding.practisedLanguages.length ==0">(Tom)</h6>  
+       </div>
+     </div>
+ </div>

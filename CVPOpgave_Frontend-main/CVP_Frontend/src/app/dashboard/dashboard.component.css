@@ -1,0 +1,29 @@
+h1{
+    color: rgb(69, 46, 218);
+}
+
+h4{
+    cursor: pointer;
+    color:rgb(69, 46, 218);
+}
+
+h3{
+    cursor: pointer;
+    color:rgb(69, 46, 218);
+}
+
+
+h4:hover{
+    opacity: 0.8;
+}
+.view {
+    width: 30% !important;
+    border-left: 10%;
+  }
+  
+  .split-view-container {
+    display: flex; 
+    align-self: stretch;
+    justify-content: 0%;
+    height: 100%;
+  } 

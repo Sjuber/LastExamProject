@@ -1,0 +1,25 @@
+Change Log.
+
+v1.4 - pgMail now supports both HTML messaging and MULTIPART MIME
+       messaging. It's backwards compatible. If you want to ONLY send
+       HTML, you need to pass an empty string as your 4th argument.
+       But why not just do both plain text & HTML? Thanks to
+       Nicklas Aven for the idea and original patch! I changed his 
+       pull request a bit to avoid duplicate code. (me)
+
+v1.3 - pgMail will now add a properly formatted Date header. This was
+       particularly troubling for some Android users. Thanks to
+       Nicklas Aven for the patch! (me)
+
+v1.2 - pgMail now properly sends UTF-8 encoded emails. Thanks to 
+       Balazs Keresztury for the patch! (me)
+     - Fixed an issue whereby some servers would reject emails due to
+       "Improper use of SMTP command pipelining." Now resolved. (me)
+     - Updated to use the Apache 2.0 license. (me)
+
+v1.1 - Added regular expression support to allow to/from fields to
+       either contain the name and email, or simply the email address. (me)
+     - Removed my mailserver from the stored proc.  you must enter your 
+       own.  Sorry :)  (me)
+
+v1.0 - Initial Release.

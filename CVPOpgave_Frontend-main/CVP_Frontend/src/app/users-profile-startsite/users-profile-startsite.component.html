@@ -1,0 +1,75 @@
+<nav>
+  <h6 *ngIf="userLoggedIn" (click)="pageToShow('createCV')" style="float: right;">
+  <div *ngIf="pageID==0">Nyt CV ➕</div>
+  <div *ngIf="pageID!=0">Tilbage</div>
+</h6>
+</nav>
+<br>
+<div class="split-view-container">
+    <div class="view">
+   
+      <container-element [ngSwitch]="pageID">
+         <div class="view2">
+          <app-get-user-cvs
+          *ngSwitchCase="0"
+          (cvToAddTo)="getCVToAddTo($event)"
+        ></app-get-user-cvs> 
+    </div>
+     <div id="front" *ngIf="cvToAddTo != undefined" style="background-color: lightgray; width: fit-content; padding: 0.5pc;">
+      <h1 style="text-align: center;" >CV <br></h1>
+      <h1 style="text-align: center; display: inline" class="purple">"{{cvToAddTo.title}}"</h1>
+      <p style="display: inline">
+        <input
+          style="display: inline"
+          type="button"
+          (click)="showhEditingCV()"
+          value="🖊️"
+        />
+      </p>
+
+      <h3>Tilføj noget nyt til dette CV:</h3>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddProject()">projekt</h4>
+      <h4 style="display: inline" (click)="showAddProject()">➕</h4>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddCVKnowledge()">
+        kompetencer
+      </h4>
+      <h4 style="display: inline" (click)="showAddCVKnowledge()">➕</h4>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddPractisedLanguage()">
+        sprog
+      </h4>
+      <h4 style="display: inline" (click)="showAddPractisedLanguage()">➕</h4>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddJob()">ansættelse</h4>
+      <h4 style="display: inline" (click)="showAddJob()">➕</h4>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddCourseCertificaction()">
+        kursus eller certificering
+      </h4>
+      <h4 style="display: inline" (click)="showAddCourseCertificaction()">
+        ➕
+      </h4>
+
+      <br />
+
+      <h4 style="display: inline" (click)="showAddEducation()">uddannelse</h4>
+      <h4 style="display: inline" (click)="showAddEducation()">➕</h4>
+    </div>
+    <app-create-simple-cv *ngSwitchCase="1"></app-create-simple-cv>
+  
+</container-element>
+  </div>
+  
+</div>

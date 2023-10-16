@@ -1,0 +1,53 @@
+<div *ngIf="cvForJobAdding!=undefined">
+   <mat-dialog-actions>
+      <button class="mat-raised-button cancelbtn" style="background-color: grey !important;" (click)="close()">X</button>
+    </mat-dialog-actions>
+    <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px;">Tilføj ansættelse</h1>
+    <div class="split-view-container">
+        <div >
+    <ol class="view" style="left: margin 10%;">
+      <form [formGroup]="cvAddJobForm" (ngSubmit)="onSubmitAddJob()" >
+        <div>
+          <label style="font-weight: bold;" for="title" >
+            Job titel:<h6 style="color: brown;">{{titleError}}</h6>
+          </label>
+          <input id="title" type="text" formControlName="title">
+        </div>
+        <div>
+          <label style="font-weight: bold;">
+            Navn på det firma du arbejde for:<h6 style="color: brown;">{{companyNameError}}</h6>
+          </label>
+          <input id="companyName" type="text" formControlName="companyName">
+          </div>  
+        <div >
+          <label style="font-weight: bold;" for="dates">
+            I hvilken periode?<h6 style="color: brown;">{{dateError}}</h6>
+          </label>
+          <p>Startdato: <input type="month" formControlName="startDate"></p>
+          <p>Slutdato: <input type="month" formControlName="endDate"></p>
+        </div>
+        <button [disabled]="!cvAddJobForm.valid" type="submit">Tilføj</button>
+      </form>
+    </ol>
+        </div>
+        <div class="view">
+            <h4>Liste over ansættelser på dette CV:</h4>
+            <table *ngIf="jobs != undefined && jobs.length >0">
+              <tr>
+                  <th>Jobtitel</th>
+                  <th>Firma</th>
+                  <th>Start måned</th>
+                  <th>Slut måned</th>
+              </tr>
+              <tr *ngFor="let job of jobs">
+                <td>{{job.title}}</td>
+                <td>{{job.company.name}}</td>
+            <td>{{formattingMonth(job.startDate)}}</td>
+            <td ><div *ngIf="job.endDate != null">{{formattingMonth(job.endDate)}}</div><div *ngIf="job.endDate == null">-</div></td>
+             
+            </tr>
+            </table>
+      <h6 *ngIf="jobs != undefined && jobs.length ==0">(Tom)</h6>  
+      </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+h6{
+    cursor: pointer;
+}
+
+ul:hover{
+  color: grey ;
+}
+
+.plus:hover{
+  opacity: 50% !important;
+}
+
+.plus{
+  font-weight: bold !important;
+}
+
+.view {
+  height: 100%;
+  margin-left: 3%;
+  width: 100%;
+}
+
+.view1 {
+  position: relative;
+  height: 40%;
+  padding-left: 0% !important;
+  top: 0px;  
+}
+
+#front{
+  position: absolute;
+  bottom: -6pc;
+  left: 2;
+}
+
+.view2 {
+  
+} 
+
+  .split-view-container {
+    align-self: stretch; 
+    height: 100%; 
+    }  
+
+    h4{
+      cursor: pointer;
+      color:rgb(69, 46, 218);
+  }
+  
+  h3{
+      cursor: pointer;
+  }
+  
+  .purple{
+    
+    color:rgb(69, 46, 218);
+  }
+  
+  h4:hover{
+      opacity: 0.8;
+  }

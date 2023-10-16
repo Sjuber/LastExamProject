@@ -1,0 +1,598 @@
+  <button
+    class="mat-raised-button cancelbtn"
+    style="background-color: grey !important; position: fixed; top: 60px; height: 40px !important;"
+    (click)="close()"
+  >X
+  </button>
+<div class="view">
+  <h6 style="color: brown" id="httpErrorID">{{ httpError }}</h6>
+  <form [formGroup]="cvEditForm" (ngSubmit)="onSubmit()">
+    <h2>
+      {{ cvBeforeEditing.consultantDTO?.name }}'s CV
+      <h6
+        style="display: inline"
+        *ngIf="cvBeforeEditing.cvStateString == inDraft"
+      >
+        (kladde)
+      </h6>
+    </h2>
+    <h6 style="color: brown">{{ bookedHoursError }}</h6>
+    <p style="display: inline">
+      (Arbejder pt.
+      <input
+        style="display: inline"
+        id="bookedHours"
+        type="number"
+        class="smallNumberInput"
+        formControlName="bookedHours"
+      />
+      ud af max ønsket
+      <input
+        style="display: inline"
+        id="maxHours"
+        type="number"
+        class="smallNumberInput"
+        formControlName="maxHours"
+      />
+      ugentlige arbejdstimer)
+    </p>
+    <p style="font-weight: bold">Personlige egenskaber:</p>
+    <p>
+      <textarea
+        id="description"
+        type="text"
+        formControlName="description"
+        rows="10"
+        cols="100"
+        >{{ cvBeforeEditing.description }}</textarea
+      >
+    </p>
+    <p style="font-weight: bold">Tekniske erfaring:</p>
+    <p>
+      <textarea
+        id="techBackground"
+        type="text"
+        formControlName="techBackground"
+        rows="10"
+        cols="100"
+        >{{ cvBeforeEditing.techBackground }}</textarea
+      >
+    </p>
+
+    <!-- COMPETENCE BLOCK -->
+    <p style="font-weight: bold">Hovedområder for kompetencer:</p>
+    <p
+      *ngIf="
+        cvBeforeEditing.cv_knowledgeList == null ||
+        cvBeforeEditing.cv_knowledgeList.length == 0
+      "
+    >
+      (Du har ingen kompetencer registreret)
+    </p>
+    <div *ngIf="cvBeforeEditing.cv_knowledgeList.length > 0">
+      <div formGroupName="cvKnowledgeList">
+        <table>
+          <tr>
+            <th>Kompetence</th>
+            <th>Niveau</th>
+            <th>Års erfaring</th>
+            <th></th>
+          </tr>
+          <tbody
+            *ngFor="
+              let cvKnowledgeToEdit of cvKnowledgeList.controls;
+              index as i
+            "
+          >
+            <h6
+              *ngIf="cvKnowledgeToEdit.value.knowledgeName == undefined"
+              id="knowledgeNameErrorID"
+              style="color: brown"
+            >
+              {{ knowledgeNameError }}
+            </h6>
+            <tr [formGroup]="cvKnowledgeToEdit">
+              <td>
+                <ng-select formControlName="knowledgeName">
+                  <div *ngFor="let knowlegde of knowlegdeDBList">
+                    <ng-option
+                      [value]="knowlegde.name"
+                      *ngIf="knowlegde.knowCategoryDTO.name != 'Andet'"
+                    >
+                      {{ knowlegde.name }} -
+                      {{ knowlegde.knowCategoryDTO.name }}
+                    </ng-option>
+                  </div>
+                  <ng-option [value]="'Andet'"> Andet </ng-option>
+                </ng-select>
+              </td>
+
+              <td>
+                <select id="levelSkill" formControlName="levelSkill">
+                  <option value="Lettere øvet">Lettere øvet</option>
+                  <option value="Øvet">Øvet</option>
+                  <option value="Erfaren">Erfaren</option>
+                  <option value="Ekspert">Ekspert</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  formControlName="cvKnowledgeYears"
+                />
+              </td>
+              <td>
+                <a
+                  style="display: inline; color: brown"
+                  (click)="removeCVKnowledge(i)"
+                  >Slet</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- COMPETENCE BLOCK END-->
+
+    <br />
+
+    <!-- JOBS BLOCK-->
+    <p style="font-weight: bold">Ansættelser:</p>
+
+    <p *ngIf="jobs.length == 0">(Du har ingen ansættelser registreret)</p>
+
+    <div *ngIf="jobs.length > 0">
+      <div formGroupName="jobs">
+        <table>
+          <tr>
+            <th>Jobtitel</th>
+            <th>Firma</th>
+            <th>Start måned</th>
+            <th>Slut måned</th>
+            <th></th>
+          </tr>
+          <tbody *ngFor="let job of jobs.controls; index as i">
+            <tr>
+              <td>
+                <h6
+                  *ngIf="job.value.jobTitle == '' && jobError != ''"
+                  id="jobErrorID"
+                  style="color: brown"
+                >
+                  Ugyldig jobtitel
+                </h6>
+              </td>
+              <td>
+                <h6
+                  *ngIf="job.value.companyName == '' && jobError != ''"
+                  id="jobErrorID"
+                  style="color: brown"
+                >
+                  Ugyldigt firma
+                </h6>
+              </td>
+              <td>
+                <h6
+                  *ngIf="
+                    job.value.endDate < job.value.startDate &&
+                    job.value.endDate != ''
+                  "
+                  id="jobErrorID"
+                  style="color: brown"
+                >
+                  Startmåned før slutmåned
+                </h6>
+              </td>
+              <td></td>
+            </tr>
+            <tr [formGroup]="job">
+              <td><input type="text" formControlName="jobTitle" /></td>
+              <td><input type="text" formControlName="companyName" /></td>
+              <td><input type="month" formControlName="startDate" /></td>
+              <td><input type="month" formControlName="endDate" /></td>
+              <td>
+                <a
+                  style="display: inline; color: brown"
+                  (click)="removeJob(job.value)"
+                  >Slet</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- JOBS BLOCK END-->
+
+    <br />
+
+    <!-- EDUCATION BLOCK-->
+    <p style="font-weight: bold">Uddannelser:</p>
+
+    <p *ngIf="educations.length == 0">(Du har ingen Uddannelser registreret)</p>
+
+    <div *ngIf="educations.length > 0">
+      <div formGroupName="educations">
+        <table>
+          <tr>
+            <th>Titel</th>
+            <th>Start år</th>
+            <th>Slut år</th>
+            <th></th>
+          </tr>
+          <tbody *ngFor="let education of educations.controls; index as i">
+            <tr>
+              <td>
+                <h6
+                  *ngIf="
+                    education.value.educationTitle == '' && educationError != ''
+                  "
+                  id="educationErrorID"
+                  style="color: brown"
+                >
+                  Ugyldig uddannelsestitel
+                </h6>
+              </td>
+              <td>
+                <h6
+                  *ngIf="
+                    education.value.educationEndYear <
+                      education.value.educationStartYear &&
+                    education.value.educationEndYear != ''
+                  "
+                  id="educationErrorID"
+                  style="color: brown"
+                >
+                  Startmåned før slutmåned
+                </h6>
+              </td>
+              <td></td>
+            </tr>
+            <tr [formGroup]="education">
+              <td><input type="text" formControlName="educationTitle" /></td>
+              <td>
+                <input type="year" formControlName="educationStartYear" />
+              </td>
+              <td><input type="year" formControlName="educationEndYear" /></td>
+              <td>
+                <a
+                  style="display: inline; color: brown"
+                  (click)="removeEducation(i)"
+                  >Slet</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- EDUCATION BLOCK END-->
+
+    <br />
+
+    <!-- LANGUAGE BLOCK-->
+    <p style="font-weight: bold">Sprogfærdigheder (kommunikation):</p>
+    <p *ngIf="cvBeforeEditing.practisedLanguages.length == 0">
+      (Du har ingen sprog registreret)
+    </p>
+    <div *ngIf="cvBeforeEditing.practisedLanguages.length > 0">
+      <div formGroupName="practisedLanguages">
+        <table>
+          <tr>
+            <th>Sprog</th>
+            <th>Skriftligt</th>
+            <th>Mundligt</th>
+            <th></th>
+          </tr>
+          <tbody
+            *ngFor="let language of practisedLanguages.controls; index as i"
+          >
+            <tr>
+              <td>
+                <h6
+                  *ngIf="
+                    language.value.languageName == '' && languageNameError != ''
+                  "
+                  id="languageNameError"
+                  style="color: brown"
+                >
+                  Ugyldigt sprog
+                </h6>
+              </td>
+            </tr>
+            <tr [formGroup]="language">
+              <td><input type="text" formControlName="languageName" /></td>
+              <td>
+                <select id="levelWritting" formControlName="levelWritting">
+                  <option value="Begynder">Begynder</option>
+                  <option value="God">God</option>
+                  <option value="Flydende">Flydende</option>
+                  <option value="Modersmål">Modersmål</option>
+                </select>
+              </td>
+              <td>
+                <select id="levelReading" formControlName="levelReading">
+                  <option value="Begynder">Begynder</option>
+                  <option value="God">God</option>
+                  <option value="Flydende">Flydende</option>
+                  <option value="Modersmål">Modersmål</option>
+                </select>
+              </td>
+              <td>
+                <a
+                  style="display: inline; color: brown"
+                  (click)="removeLanguage(i)"
+                  >Slet</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- LANGUAGE BLOCK END-->
+
+    <!-- COURSE BLOCK END-->
+    <p style="font-weight: bold">Kurser og certificeringer:</p>
+
+    <p *ngIf="cvBeforeEditing.coursesCertifications.length == 0">
+      (Du har ingen kurser eller certificeringer registreret)
+    </p>
+
+    <div *ngIf="cvBeforeEditing.coursesCertifications.length > 0">
+      <div formGroupName="coursesCertifications">
+        <table>
+          <tr>
+            <th>Titel</th>
+            <th>Start dato</th>
+            <th>Slut dato</th>
+            <th></th>
+          </tr>
+          <tbody
+            *ngFor="
+              let courseCertification of coursesCertifications.controls;
+              index as i
+            "
+            id="courseCertificationErrorID"
+          >
+            <tr>
+              <td>
+                <h6
+                  *ngIf="
+                    courseCertificationError != '' &&
+                    (courseCertification.value.courseCertificationTitle == '' ||
+                      courseCertification.value.courseCertificationTitle ==
+                        undefined)
+                  "
+                  style="color: brown"
+                >
+                  Ugyldig titel
+                </h6>
+              </td>
+              <td>
+                <h6
+                  *ngIf="
+                    courseCertificationError != '' &&
+                    (courseCertification.value.courseCertificationStartDate ==
+                      '' ||
+                      courseCertification.value.courseCertificationStartDate ==
+                        undefined)
+                  "
+                  style="color: brown"
+                >
+                  Ugyldig startdato
+                </h6>
+                <h6
+                  *ngIf="
+                    courseCertificationError != '' &&
+                    courseCertification.value.courseCertificationEndDate <
+                      courseCertification.value.courseCertificationStartDate
+                  "
+                  style="color: brown"
+                >
+                  Slutdato må ikke være tidligere end startdato
+                </h6>
+              </td>
+              <td>
+                <h6
+                  *ngIf="
+                    courseCertificationError != '' &&
+                    (courseCertification.value.courseCertificationEndDate ||
+                      courseCertification.value.courseCertificationEndDate ==
+                        undefined) == ''
+                  "
+                  style="color: brown"
+                >
+                  Ugyldig slutdato
+                </h6>
+              </td>
+            </tr>
+            <tr [formGroup]="courseCertification">
+              <td>
+                <input type="text" formControlName="courseCertificationTitle" />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  min="1900-01-01"
+                  formControlName="courseCertificationStartDate"
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  min="1900-01-01"
+                  formControlName="courseCertificationEndDate"
+                />
+              </td>
+              <td>
+                <a
+                  style="display: inline; color: brown"
+                  (click)="removeCourseCertification(i)"
+                  >Slet</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- COURSE BLOCK END-->
+
+    <br>
+
+    <!-- PROJECTS BLOCK-->
+    <h4 style="font-weight: bold; display: inline;">Projekter:</h4> 
+    <!-- <h6 style="display: inline" (click)="showAddProject()">➕Tilføj</h6> -->
+    <p
+      *ngIf="
+        cvBeforeEditing.projects == undefined ||
+        cvBeforeEditing.projects?.length == 0
+      "
+    >
+      (Du har ingen projekter på CV'et registreret)
+    </p>
+    <div
+      *ngIf="
+        cvBeforeEditing.projects != undefined &&
+        cvBeforeEditing.projects?.length != 0
+      "
+    >
+    
+      <div *ngFor="let project of projects.controls; index as indexProject">
+        <div style="text-align: center; display: inline">
+          ----------------------------------------- Projekt
+          {{ indexProject + 1 }} ----------------------------------------
+        </div>
+        <input
+          type="button"
+          style="display: inline; background-color: brown; color: whitesmoke"
+          (click)="removeProject(indexProject)"
+          value="Slet projekt"
+        />
+        <div [formGroup]="project">
+          <p style="font-weight: bold">Beskrivelse:</p>
+          <textarea
+            type="text"
+            formControlName="project_description"
+          ></textarea>
+          <p style="font-weight: bold"><br />Kompetencer for projektet:</p>
+          <h6
+            id="{{ 'knowledgeProjectErrorID' + indexProject }}"
+            style="color: brown"
+          >
+            <div *ngIf="knowledgeProjectErrorNumber == indexProject">
+              {{ knowledgeProjectError }}
+            </div>
+          </h6>
+          <table>
+            <tbody
+              *ngFor="
+                let project_knowledge of getProjects_knowledgeList(project)
+                  .controls;
+                index as i
+              "
+            >
+              <tr>
+                <li style="display: inline-table">
+                  <div [formGroup]="project_knowledge">
+                    <td>
+                      <ng-select
+                        formControlName="knowledgeNameForProject"
+                        style="display: inline"
+                      >
+                        <div *ngFor="let knowlegde of knowlegdeDBList">
+                          <ng-option
+                            [value]="knowlegde.name"
+                            *ngIf="knowlegde.knowCategoryDTO.name != 'Andet'"
+                          >
+                            {{ knowlegde.name }} -
+                            {{ knowlegde.knowCategoryDTO.name }}
+                          </ng-option>
+                        </div>
+                        <ng-option [value]="'Andet'"> Andet - </ng-option>
+                      </ng-select>
+                    </td>
+                    <td
+                      *ngIf="
+                        project_knowledge.value.knowledgeNameForProject ==
+                        'Andet'
+                      "
+                    >
+                      <input
+                        *ngIf="
+                          project_knowledge.value.knowledgeNameForProject ==
+                          'Andet'
+                        "
+                        style="display: inline"
+                        type="text"
+                        formControlName="noteForProjectKnowledge"
+                      />
+                    </td>
+                    <td>
+                      <a
+                        style="display: inline; color: brown"
+                        (click)="
+                          removeProjectKnowledge(
+                            i,
+                            indexProject,
+                            getProjects_knowledgeList(project)
+                          )
+                        "
+                        >Slet</a
+                      >
+                      
+                    </td>
+                  </div>
+                </li>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <tr>
+              <th>Firma</th>
+              <th>Evt. broker</th>
+              <th>Start dato</th>
+              <th>Slut dato</th>
+              <th>Rolle i projektet</th>
+            </tr>
+            <tr>
+              <td><input type="text" formControlName="customer" /></td>
+              <td><input type="text" formControlName="broker" /></td>
+              <td><input type="date" formControlName="startDate" /></td>
+              <td><input type="date" formControlName="endDate" /></td>
+              <td><input type="text" formControlName="roleForProject" /></td>
+            </tr>
+            <tr>
+              <br />
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <button
+      style="display: inline"
+      [disabled]="!cvEditForm.valid"
+      type="submit"
+    >
+      Gem
+    </button>
+  </form>
+  <!-- PROJECTS BLOCK END-->
+
+  <mat-dialog-actions style="display: inline">
+    <button
+      style="
+        background-color: brown !important;
+        border: 2px solid rgba(255, 255, 255, 0);
+        display: inline;
+      "
+      (click)="close()"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>

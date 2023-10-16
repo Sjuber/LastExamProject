@@ -1,0 +1,213 @@
+<h2 *ngIf="error" mat-dialog-title style="color: brown">{{ error }}</h2>
+<div *ngIf="cvDB">
+  <div style="text-align: center">
+    <h2 style="text-align: center">CV - {{ cvDB.consultantDTO?.name }}</h2>
+    <p style="display: inline">
+     tlf. nr. {{ cvDB.consultantDTO?.phone }} | {{ cvDB.consultantDTO?.email }}
+    </p>
+  </div>
+  <p style="font-weight: bold; display: inline">Rådighedstimer om ugen:</p>
+  <p>{{ cvDB.maxHours - cvDB.bookedHours }}</p>
+  <p style="font-weight: bold; display: inline">Personlige egenskaber:</p>
+  <p>{{ cvDB.description }}</p>
+  <p style="font-weight: bold; display: inline">Tekniske erfaring:</p>
+  <p>{{ cvDB.techBackground }}</p>
+
+  <!-- COMPETENCE BLOCK -->
+  <div *ngIf="cvDB.cv_knowledgeList && cvDB.cv_knowledgeList.length > 0">
+    <h4 style="font-weight: bold">Kompetencer:</h4>
+    <table>
+      <tr>
+        <th>Kompetence</th>
+        <th>Niveau</th>
+        <th>Års erfaring</th>
+      </tr>
+      <tr *ngFor="let cvKnowledge of cvDB.cv_knowledgeList">
+        <td *ngIf="cvKnowledge.knowledge.name">
+          {{ cvKnowledge.knowledge.name }}
+        </td>
+        <td *ngIf="!cvKnowledge.knowledge.name">{{ cvKnowledge.note }}</td>
+        <td *ngIf="cvKnowledge.knowledge.name !='Industribrancher'">{{ cvKnowledge.levelSkill }}</td>
+        <td>{{ cvKnowledge.years }}</td>
+      </tr>
+    </table>
+  </div>
+  <!-- COMPETENCE BLOCK END-->
+
+  <!-- JOB BLOCK -->
+  <div *ngIf="jobs.length != 0">
+    <br />
+    <h4 style="font-weight: bold">Ansættelser:</h4>
+    <table>
+      <tr>
+        <th>Jobtitel</th>
+        <th>Firma</th>
+        <th>Start måned</th>
+        <th>Slut måned</th>
+      </tr>
+      <tr *ngFor="let job of jobs">
+        <td>{{ job.title }}</td>
+        <td>{{ job.company.name }}</td>
+        <td>{{ formattingMonth(job.startDate) }}</td>
+        <td>
+          <div *ngIf="job.endDate != null">
+            {{ formattingMonth(job.endDate) }}
+          </div>
+          <div *ngIf="job.endDate == null">-</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <!-- JOB BLOCK END-->
+
+  <!-- EDUCATION BLOCK -->
+  <div *ngIf="cvDB.educations.length != 0">
+    <br />
+    <h4 style="font-weight: bold">Uddannelse:</h4>
+    <table>
+      <tr>
+        <th>Titel</th>
+        <th>Start år</th>
+        <th>Slut år</th>
+      </tr>
+      <tr *ngFor="let education of cvDB.educations">
+        <td>{{ education.title }}</td>
+        <td>{{ education.startYear }}</td>
+        <td>
+          <div *ngIf="education.endYear != null">
+            {{ education.endYear }}
+          </div>
+          <div *ngIf="education.endYear == null">-</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <!-- EDUCATION BLOCK END-->
+
+  <br />
+
+  <!-- LANGUAGES BLOCK -->
+  <div *ngIf="cvDB.practisedLanguages.length != 0">
+    <div *ngIf="cvDB.practisedLanguages.length != 0">
+      <h4 style="font-weight: bold">Sprogfærdigheder (kommunikation):</h4>
+      <table>
+        <tr>
+          <th>Sprog</th>
+          <th>Skriftligt</th>
+          <th>Mundligt</th>
+        </tr>
+        <tr *ngFor="let practisedLanguage of cvDB.practisedLanguages">
+          <td>{{ practisedLanguage.name }}</td>
+          <td>{{ practisedLanguage.levelWritting }}</td>
+          <td>{{ practisedLanguage.levelReading }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <!-- LANGUAGES BLOCK END-->
+
+  <br />
+
+  <!-- COURSES BLOCK -->
+  <div *ngIf="cvDB.coursesCertifications.length != 0">
+    <h4 style="font-weight: bold">Kurser og certificeringer:</h4>
+    <table>
+      <tr>
+        <th>Titel</th>
+        <th>Start dato</th>
+        <th>Slut dato</th>
+      </tr>
+      <tr *ngFor="let courseCertification of cvDB.coursesCertifications">
+        <td>{{ courseCertification.title }}</td>
+        <td>{{ formattingDate(courseCertification.startDate) }}</td>
+        <td>{{ formattingDate(courseCertification.endDate) }}</td>
+      </tr>
+    </table>
+  </div>
+  <!-- COURSES BLOCK END-->
+
+  <br />
+
+  <!-- PROJECTS BLOCK -->
+  <div *ngIf="cvDB.projects?.length != 0">
+    <h4 style="font-weight: bold">Projekter:</h4>
+    <br />
+    <div *ngFor="let project of cvDB.projects; index as i">
+      <div style="text-align: center">
+        ----------------------------------------- Projekt
+        {{ i + 1 }} ----------------------------------------
+      </div>
+      <table>
+        <tr>
+          <th>Beskrivelse:</th>
+        </tr>
+        <tr>
+          <td>{{ project.description }}</td>
+        </tr>
+        <tr>
+          <td><br /></td>
+        </tr>
+        <tr>
+          <th>Kompetencer:</th>
+        </tr>
+        <tr>
+          <td>
+            <div *ngFor="let project_knowledge of project.projectknowledgeList">
+              <li *ngIf="project_knowledge.knowledge.name == null">
+                {{ project_knowledge.knowledge.knowCategoryDTO.name }} -
+                {{ project_knowledge.note }}
+              </li>
+              <li *ngIf="project_knowledge.knowledge.name != null">
+                {{ project_knowledge.knowledge.name }}
+              </li>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><br /></td>
+        </tr>
+        <tr>
+          <th>Firma</th>
+          <th>Evt. broker</th>
+          <th>Start dato</th>
+          <th>Slut dato</th>
+          <th>Rolle i projektet</th>
+        </tr>
+        <tr>
+          <td>{{ project.customer.name }}</td>
+          <td>{{ project.broker?.name }}</td>
+          <td>{{ formattingDate(project.dateStart) }}</td>
+          <td>
+            <div *ngIf="project.dateEnd != null">
+              {{ formattingDate(project.dateEnd) }}
+            </div>
+            <div *ngIf="project.dateEnd == null">-</div>
+          </td>
+          <td>{{ project.roleForProject }}</td>
+        </tr>
+
+        <tr>
+          <br />
+        </tr>
+        <tr></tr>
+        <tr>
+          <br />
+        </tr>
+      </table>
+    </div>
+  </div>
+  <!-- PROJECTS BLOCK END-->
+
+  <br />
+  <br />
+</div>
+<mat-dialog-actions>
+  <button
+    style="background-color: grey"
+    class="mat-raised-button"
+    style="position: fixed; top: 60px;"
+    (click)="close()"
+  >
+    Luk
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,108 @@
+<div *ngIf="cvForAddingCVKnowledge != undefined">
+  <mat-dialog-actions>
+    <button
+      class="mat-raised-button cancelbtn"
+      style="background-color: grey !important"
+      (click)="close()"
+    >
+      X
+    </button>
+  </mat-dialog-actions>
+  <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px">
+    Tilføj kompetence
+  </h1>
+  <div class="split-view-container">
+    <div>
+      <ol class="view" style="left: margin 10%">
+        <form
+          [formGroup]="cvAddCVKnowledgeForm"
+          (ngSubmit)="onSubmitAddCV_Knowledge()"
+        >
+          <div>
+            <label style="font-weight: bold" for="knowledgeName">
+              Kompetence:
+              <h6 style="color: brown">{{ knowledgeNameError }}</h6>
+            </label>
+            <!--Using ng-option and for loop-->
+            <ng-select [(ngModel)]="knowledgeName" [ngModelOptions]="{standalone: true}">
+              <div *ngFor="let knowlegde of allKnowledgeList">
+              <ng-option 
+              [value]="knowlegde.name"
+              *ngIf="knowlegde.knowCategoryDTO.name != 'Andet'">
+                {{ knowlegde.name }} -
+                {{ knowlegde.knowCategoryDTO.name }}
+              </ng-option>
+            </div>
+              <ng-option
+              [value]="'Andet'">
+                Andet
+              </ng-option>
+            </ng-select>
+          </div>
+          <div>
+            <div style="color: brown;" *ngIf="knowledgeName=='Andet'">
+              <label style="font-weight: bold"> Findes kompetencen ikke? </label>
+              <label style="font-weight: bold"> Skriv navn på kompetencen: </label>
+              <input id="note" type="text" formControlName="note" />
+            </div>
+            <label style="font-weight: bold">
+              Niveau:
+              <h6 style="color: brown">{{ levelSkillError }}</h6>
+            </label>
+            <select id="levelSkill" formControlName="levelSkill">
+              <option value="Lettere øvet">Lettere øvet</option>
+              <option value="Øvet">Øvet</option>
+              <option value="Erfaren">Erfaren</option>
+              <option value="Ekspert">Ekspert</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight: bold">
+              Antal års erfaring:
+              <h6 style="color: brown">{{ yearsError }}</h6>
+            </label>
+            <input id="years" min="0" type="number" formControlName="years" />
+          </div>
+
+          
+          <button [disabled]="!cvAddCVKnowledgeForm.valid" type="submit">
+            Tilføj
+          </button>
+        </form>
+      </ol>
+    </div>
+    <div class="view">
+      <h4>Liste over kompetencer på dette CV:</h4>
+      <table
+        *ngIf="
+          cvForAddingCVKnowledge.cv_knowledgeList != null &&
+          cvForAddingCVKnowledge.cv_knowledgeList.length > 0
+        "
+      >
+        <tr>
+          <th>Kategori</th>
+          <th>Kompetence</th>
+          <th>Niveau</th>
+          <th>Års erfaring</th>
+        </tr>
+        <tr
+          *ngFor="let cv_knowledge of cvForAddingCVKnowledge.cv_knowledgeList"
+        >
+          <td>{{ cv_knowledge.knowledge.knowCategoryDTO.name }}</td>
+          <td *ngIf="cv_knowledge.knowledge.name">{{ cv_knowledge.knowledge.name }}</td>
+          <td *ngIf="!cv_knowledge.knowledge.name">{{ cv_knowledge.note }}</td>
+          <td>{{ cv_knowledge.levelSkill }}</td>
+          <td>{{ cv_knowledge.years }}</td>
+        </tr>
+      </table>
+      <h6
+        *ngIf="
+          cvForAddingCVKnowledge.cv_knowledgeList != undefined &&
+          cvForAddingCVKnowledge.cv_knowledgeList.length == 0
+        "
+      >
+        (Tom)
+      </h6>
+    </div>
+  </div>
+</div>

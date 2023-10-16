@@ -1,0 +1,47 @@
+h1{
+    color: rgb(69, 46, 218);
+    text-align: center;
+
+}
+.demo-table {
+    width: 100%;
+  }
+  .demo-table-clicked {
+    width: 50%;
+  }
+  
+  .mat-row .mat-cell {
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    cursor: pointer;
+  }
+  
+  .mat-row:hover .mat-cell {
+    border-color: currentColor;
+  }
+  
+  .row-is-clicked {
+    font-weight: bold;
+
+  }
+
+  .split-view-container {
+    display: flex; 
+    align-self: stretch;
+    justify-content: 10%;
+    height: 100%;
+  } 
+ 
+.view {
+  width: 100% !important;
+  
+}
+
+/* .boxview {
+  flex: 33%;
+  padding: 10px;
+  height: 100px; 
+} */
+
+
+  

@@ -1,0 +1,46 @@
+<div *ngIf="cvForCourseCertificationAdding!=undefined">
+    <mat-dialog-actions>
+       <button class="mat-raised-button cancelbtn" style="background-color: grey !important;" (click)="close()">X</button>
+     </mat-dialog-actions>
+     <h1 style="font-weight: bold; text-align: center; padding-bottom: 20px;">Tilføj kursus/certificering</h1>
+     <h6 style="color: brown; text-align:center;">{{httpError}}</h6>
+     <div class="split-view-container">
+         <div >
+     <ol class="view" style="left: margin 10%;">
+       <form [formGroup]="cvAddCourseCertificationForm" (ngSubmit)="onSubmitAddCourseCertification()" >
+         <div>
+           <label style="font-weight: bold;" for="title" >
+             Titel på kursus/certificering:<h6 style="color: brown;">{{titleError}}</h6>
+           </label>
+           <input id="title" type="text" formControlName="title">
+         </div> 
+         <div>
+           <label style="font-weight: bold;" for="dates">
+             I hvilken periode?<h6 style="color: brown;">{{dateError}}</h6>
+           </label>
+           <p>Startdato: <input type="date" min="1900-01-01" formControlName="startDate"></p>
+           <p>Slutdato: <input type="date" min="1900-01-01" formControlName="endDate"></p>
+         </div>
+         <button [disabled]="!cvAddCourseCertificationForm.valid" type="submit">Tilføj</button>
+       </form>
+     </ol>
+         </div>
+         <div class="view">
+             <h4>Liste over kurser og certificeringer på dette CV:</h4>
+             <table *ngIf="cvForCourseCertificationAdding.coursesCertifications != undefined && cvForCourseCertificationAdding.coursesCertifications.length >0">
+               <tr>
+                   <th>Titel</th>
+                   <th>Start dato</th>
+                   <th>Slut dato</th>
+               </tr>
+               <tr *ngFor="let courseCertification of cvForCourseCertificationAdding.coursesCertifications">
+                 <td>{{courseCertification.title}}</td>
+             <td>{{formattingDate(courseCertification.startDate)}}</td>
+             <td >{{formattingDate(courseCertification.endDate)}}</td>
+              
+             </tr>
+             </table>
+       <h6 *ngIf="cvForCourseCertificationAdding.coursesCertifications != undefined && cvForCourseCertificationAdding.coursesCertifications.length ==0">(Tom)</h6>  
+       </div>
+     </div>
+ </div>

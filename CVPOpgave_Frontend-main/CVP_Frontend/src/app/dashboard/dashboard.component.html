@@ -1,0 +1,10 @@
+<h1>Her er alle tilgængelige CV'er</h1>
+<h3 style="color: brown;"> <br>{{noCVsMessage}}</h3>
+<div class="split-view-container">
+    <div class="view">
+<div *ngFor="let cv of allOriginalSimpleCVs;">
+<h4 (click)="showOriginalCV(cv)">CV - {{cv.title}}</h4> 
+<h6>af {{cv.consultantName}}</h6>
+</div>
+</div> 
+</div>

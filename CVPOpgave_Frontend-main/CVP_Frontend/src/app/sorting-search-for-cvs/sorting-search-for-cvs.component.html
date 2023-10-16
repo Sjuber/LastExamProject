@@ -1,0 +1,307 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h1 style="text-align: center;">Søg konsulenter</h1>
+    </div>
+  </div>
+  <div style="margin-left:3pc; margin-right: 3pc; margin-top: 1pc;" class="boxForSearch" [formGroup]="searchGroup">
+    <h6 style="color: brown;">{{error}}</h6>
+    <div class="row">
+      <div class="col-sm-3">
+        <p style="font-weight: bold;"> 
+           <select class="custom-select form-control priority-select" id="priorityCVKnowledge" formControlName="priorityCVKnowledge">
+            <option *ngFor="let letter of priorityLetters" [value]="letter">{{letter}}</option>
+          </select> 
+          Kompetencer</p>
+        <div class="row">
+          <div class="col-sm input-group">
+            <input class="form-control" type="search" formControlName="knowledgeName"
+              placeholder="Skriv evt. kompetence" >
+            <ul
+              style="overflow-y: scroll; list-style: none; position:absolute; z-index: 1001; font-style: italic; width: 100%; max-height:6pc;  top:35px; left:-16px;"
+              *ngIf="knowledgeName != ''">
+              <div *ngFor="let knowledge of allKnowledgeListFromDBTmp | searchFilter:knowledgeName"
+                (click)="selectOption(knowledge)">
+                <li *ngIf="knowledge.knowCategoryDTO.name != 'Andet' 
+               && knowledge.knowCategoryDTO.name !='Industribrancher' 
+               && knowledgeName !== knowledge.name" class="shadowing">
+                  {{ knowledge.name }} -
+                  {{ knowledge.knowCategoryDTO.name }}
+                </li>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <h6></h6>
+        </div>
+        <div class="row">
+          <div class="input-group">
+            <div class="input-group-prepend col-md-6">
+              <span class="input-group-text" for="inputGroupSelect01">Niveau</span>
+            </div>
+            <select class="custom-select form-control" id="levelSkillRating" formControlName="levelSkillRating">
+              <option style="text-align: left;" value=1>(Ukendt)</option>
+              <option style="text-align: left;" value=1>Lettere øvet</option>
+              <option style="text-align: left;" value=2>Øvet</option>
+              <option style="text-align: left;" value=3>Erfaren</option>
+              <option style="text-align: left;" value=4>Ekspert</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <div class="input-group-prepend col-md-6">
+              <span class="input-group-text">Års erfaring</span>
+            </div>
+            <div class="col-md">
+              <input class="form-control" style="text-align: right;" type="number" min="0" formControlName="years"
+                oninput="this.value = Math.abs(this.value) >= 0 ? Math.abs(this.value) : null">
+            </div>
+          </div>
+          <br>
+          <br>
+          <div style="text-align: left;">
+            <button class="btn btn-primary" (click)="addCVKnowledgeForSortingSearch()">Tilføj</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <p [ngClass]="{
+          'noEmpty' : chosedCVKnowledgeList.length > 0 ,
+          'empty' : chosedCVKnowledgeList.length == 0
+       }" style="font-weight: bold;"> Kompetencer i prioriteret rækkefølge</p>
+       <p style="display: flexbox; position:fixed; z-index: 10pc; top: 13pc;" *ngIf="helpImportantBox && amountCVKnowledge == 0">
+        Tilføj hvis kompetence SKAL indeholdes!
+      </p>
+        <ol type="1">
+          <div *ngFor="let cvKnowledge of chosedCVKnowledgeList; index as i;" class="boxForKnowledge" style="display: inline;">
+            <li *ngIf="cvKnowledge.knowledge.knowCategoryDTO.name != 'Industribrancher'">  
+               <input style="margin-right: 1pc;" (click)="checkboxChecks(i)" [checked]="i<amountCVKnowledge" type="checkbox" (mouseover)="helpImportantBox=true" (mouseout)="helpImportantBox=false">
+               <a style="display: inline;" (click)="removeCVKnowledge(cvKnowledge)" class="badge badge-primary badge-primary-list">
+                {{cvKnowledge.knowledge.name}}
+                <div style="display: inline;" *ngIf="cvKnowledge.knowledge.knowCategoryDTO.name == 'Andet'">
+                  {{cvKnowledge.note}}
+                </div>
+                <div style="display: inline;" *ngIf="cvKnowledge.levelSkill !=null && cvKnowledge.levelSkill != ''">
+                  - {{cvKnowledge.levelSkill}}
+                </div>
+                <div style="display: inline;" *ngIf="cvKnowledge.years != 0">
+                  - {{cvKnowledge.years}} år
+                </div>
+                <div style="display: inline;">
+                  - slet
+                </div>
+              </a>
+            </li>
+          </div>
+        </ol>
+
+      </div>
+      <div class="col-md-3">
+        <div class="row">
+          <h6 *ngIf="languageNameError!=''" style="color: brown;">{{languageNameError}}</h6>
+          <div class="col-sm-11">
+            <p style="font-weight: bold;">
+              <select class="custom-select form-control priority-select" id="priorityLanguage" formControlName="priorityLanguage">
+               <option *ngFor="let letter of priorityLetters" [value]="letter">{{letter}}</option>
+             </select> 
+             Sprogkundskab</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-11">
+            <input class="form-control" type="search" formControlName="languageName" placeholder="Indtast evt. sprog">
+          </div>
+        </div>
+        <div class="row">
+          <h6></h6>
+        </div>
+        <div class="row">
+          <div class="col-sm-11">
+            <div class="input-group">
+              <div class="input-group-prepend col-md-4">
+                <span class="input-group-text" for="inputGroupSelect01">Skriftligt</span>
+              </div>
+              <select class="custom-select form-control col-sm-6" id="levelWriting" formControlName="levelWriting">
+                <option style="text-align: left;" value='IkkeRelevant'>(Ligegyldigt niveau)</option>
+                <option style="text-align: left;" value="Modersmål">Modersmål</option>
+                <option style="text-align: left;" value="Flydende">Flydende</option>
+                <option style="text-align: left;" value="God">God</option>
+                <option style="text-align: left;" value="Begynder">Begynder</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-sm-11">
+            <div class="input-group">
+              <div class="input-group-prepend col-md-4">
+                <span class="input-group-text" for="inputGroupSelect01">Mundtligt</span>
+              </div>
+              <select class="custom-select form-control col-sm-6" id="levelSpeaking" formControlName="levelSpeaking">
+                <option style="text-align: left;" value='IkkeRelevant'>(Ligegyldigt niveau)</option>
+                <option style="text-align: left;" value="Modersmål">Modersmål</option>
+                <option style="text-align: left;" value="Flydende">Flydende</option>
+                <option style="text-align: left;" value="God">God</option>
+                <option style="text-align: left;" value="Begynder">Begynder</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-3">
+        <div class="row">
+          <p style="font-weight: bold;">
+              <select class="custom-select form-control priority-select" id="priorityIndustry" formControlName="priorityIndustry">
+                 <option  [value]="letter" *ngFor="let letter of priorityLetters" >{{letter}}</option>
+             </select> 
+              Erfaring i branche</p>
+          <div class="input-group ">
+            <div class="col-md-10 ">
+              <ng-select formControlName="workedForCompany">
+                <ng-option class="form-control" [value]="''">(Ingen bestemt erfaring)</ng-option>
+                <div *ngFor="let knowlegde of allKnowledgeListFromDBTmp">
+                  <ng-option class="form-control" [value]="knowlegde.name"
+                    *ngIf="knowlegde.knowCategoryDTO.name =='Industribrancher'">
+                    {{ knowlegde.name }}
+                  </ng-option>
+                </div>
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+       <p style="font-weight: bold; display: inline;">
+              <select class="custom-select form-control priority-select" id="priorityFreeHours" formControlName="priorityFreeHours">
+              <option *ngFor="let letter of priorityLetters" [value]="letter" style="display: inline;">{{letter}}</option>
+             </select>
+              Ledighed</p>
+          <div class="input-group">
+            <div class="col-md-10">
+              <input class="form-control" type="number" min="0" formControlName="notBooked"
+                oninput="this.value = Math.abs(this.value) >= 0 ? Math.abs(this.value) : null">
+              <p [ngClass]="{
+                  'noEmpty' : notBooked && notBooked >= 0,
+                  'empty' : !notBooked
+               }" style="font-style: italic;"> Minimum antal timer om ugen </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <div
+            style="text-align: center; height: auto !important; width: 100% !important; display:inline-block!important;">
+            <input type="button" value="Søg" (click)="sortSimpleCVsBySearchFeatues()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div style="background-color: rgb(227, 239, 239); display: flexbox; position:fixed; bottom: 3pc; z-index: 10pc;  padding-left: 1pc; right: 1pc;">
+<p style="color: black;">KOMPETENCE - farver</p>
+<p class="levelMatch" style="background-color:rgb(143, 138, 33); font-weight:bold; display: inline;">###</p><p style="display: inline; color: black;"> = Niveau og navn matcher</p>
+<br>
+<p class="yearsMatch" style="background-color:rgb(172, 79, 79);font-weight:bold;display: inline; color:rgb(172, 79, 79)" >###</p><p style="display: inline; color: black;"> = År og navn matcher </p>
+<br>
+<p class="nameMatch" style="background-color:rgb(92, 90, 90);font-weight:bold;display: inline; color:rgb(92, 90, 90)" >###</p><p style="display: inline; color: black;"> = Navn matcher kun</p>
+<br>
+<p class="noMatch" style="background-color:grey;font-weight:bold;display: inline; color:grey" >###</p><p style="display: inline; color: black;"> = Intet matcher</p>
+<br>
+<p class="totalMatch" style="background-color:rgb(90, 190, 24);font-weight:bold;display: inline;" >###</p><p style="display: inline; color: black;"> = Alt matcher</p>
+<br>
+</div>
+<h4 id="searchedConsultantsSuggestion" style="text-align: center;">Vores forslag til din søgning...</h4>
+<br>
+<div *ngFor="let simpleCV of simpleCVs; index as i;">
+  <div *ngIf="i%4==0" class="row">
+    <div class="col-md-3" *ngFor="let j of [0,1,2,3]">
+      
+      <div *ngIf="simpleCVs[i+j]" class="view" style="border-left: 2px solid rgb(192, 192, 192); ">        
+        <!-- FOR TESTING !!! -->
+        <!-- <p>{{simpleCVs[i+j].sortScore}}</p> -->
+          <img src="../assets/Miracle42Logo.png" width="30%" height="auto" alt="Miracle42">
+        <br>
+        <img src="../assets/TestForProfilePictureDummy.png" width="40%" height="auto" alt="ProfilePicture">
+        <h4 (click)="showOriginalCV(simpleCVs[j+i])">{{simpleCVs[i+j].consultantName}}</h4>
+        <div style="margin: 0.5pc;" class="view" style="border:2px solid rgb(199, 187, 187)">
+          <div style="margin: 0.5pc" class="row ">
+            <div class="col-sm next-line">
+              <p *ngIf="simpleCVs[i+j].maxHours-simpleCVs[i+j].bookedHours > 0" [ngClass]="{
+                  'totalMatch' : simpleCVs[i+j].maxHours-simpleCVs[i+j].bookedHours >= notBooked 
+                  && notBooked > 0 
+                  && colorsOn == true
+               }">Ledig: {{simpleCVs[i+j].maxHours-simpleCVs[i+j].bookedHours}} timer om ugen pt.</p>
+              <p *ngIf="simpleCVs[i+j].maxHours-simpleCVs[i+j].bookedHours <= 0" style="color: brown !important;">(Ikke
+                ledig)</p>
+              <h5 style="font-weight: bold;">Erfaring</h5>
+              <table class="col-sm-12">
+                <th class="subTitle">År</th>
+                <th class="subTitle">Kompetence</th>
+                <th class="subTitle">Niveau</th>
+                <tr *ngFor="let cvKnowlegdeForSimpleCV of simpleCVs[i+j].cvKnowledgeList; index as inx;">
+                  <td class="col-sm-2" [ngClass]="getColorForCVKnowledge(cvKnowlegdeForSimpleCV)">
+                    <div style="text-align: center;">{{cvKnowlegdeForSimpleCV.years}}</div>
+                  </td>
+                  <td class="col-sm">
+                    <div [ngClass]="getColorForCVKnowledge(cvKnowlegdeForSimpleCV,workedForCompany)"
+                      *ngIf="cvKnowlegdeForSimpleCV.knowledge.name != null">{{cvKnowlegdeForSimpleCV.knowledge.name}}
+                    </div>
+                    <div *ngIf="cvKnowlegdeForSimpleCV.knowledge.name == null;"  [ngClass]="getColorForCVKnowledge(cvKnowlegdeForSimpleCV)">
+                      Andet -
+                      <div [ngClass]="getColorForCVKnowledge(cvKnowlegdeForSimpleCV,workedForCompany)"
+                        style="display: inline; font-style: italic; font-weight: lighter;">
+                        {{cvKnowlegdeForSimpleCV.note}}</div>
+                    </div>
+                  </td>
+                  <td class="col-sm-4" [ngClass]="getColorForCVKnowledge(cvKnowlegdeForSimpleCV)">
+                    <div *ngIf="cvKnowlegdeForSimpleCV.knowledge.knowCategoryDTO.name != 'Industribrancher'">
+                      {{cvKnowlegdeForSimpleCV.levelSkill}}</div>
+                  </td>
+
+                </tr>
+              </table>
+              <div class="row">
+                <h6 class="col-sm-4"> </h6>
+              </div>
+              <h5 style="font-weight: bold;">Sprog </h5>
+
+              <div *ngFor="let language of simpleCVs[i+j].languages">
+                <p  [ngClass]="getColorForLanguage(language)" style="text-decoration: underline; font-weight: bold;">{{language?.name}}</p>
+                <div class="col-sm-8"></div>
+                <div class="row">
+                  <p class="col-sm" style="color:grey;display: inline;">Tale: {{language?.levelReading}}</p>
+                  <p class="col-sm-6" style="color:grey;display: inline;">Skriftligt: {{language.levelWritting}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+</div>
+<div *ngIf="doneLoading==false">
+
+  <body>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </body>
+  <h5 style="text-align: center;">Henter konsulenter...</h5>
+
+</div>
+<h5 *ngIf="simpleCVsToAdd?.length == 0 && doneLoading==true" style="text-align: center;">Der er ikke flere konsulenter
+  at hente</h5>
+<!-- <p style="text-align: center;">{{simpleCVs.length}}</p> -->
+<div style="text-align: left;">
+  <input *ngIf="simpleCVsToAdd?.length != 0 && simpleCVs.length!=0" style="margin: 3pc;" type="button"
+    value="Hent flere konsulenter" (click)="loadingMoreConsultants()">
+</div>

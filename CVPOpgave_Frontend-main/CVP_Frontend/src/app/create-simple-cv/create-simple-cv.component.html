@@ -1,0 +1,46 @@
+
+<div *ngIf="!submitted">
+<h4 id="cvTitel">Opret dit nye CV:</h4>
+<h6 style="color: brown;">{{loginError}}</h6>
+<h6 style="color: brown;">{{httpError}}</h6>
+<form [formGroup]="cvAddForm" (ngSubmit)="saveForlater()" fxFlex fxLayout="column" autocomplete="off" style="margin: 30px">
+    
+    <div>
+        <p><label for="title">
+          Hvilken title skal dit CV have ? (Skal være unikt)
+        </label></p><h6 style="color: brown;">{{titleError}}</h6>
+        <input id="title" type="text" formControlName="title">
+      </div>
+      <div>
+        <p><label for="weeklyHours">
+          
+          Hvor mange timer ugentligt ønsker du max at arbejde med denne type job?
+        </label></p><h6 style="color: brown;">{{maxHoursError}}</h6>
+        <input id="weeklyHours" type="number" formControlName="weeklyHours">
+      </div>
+      <div>
+        <p><label for="bookedHours">
+          
+          Hvor mange timer arbejder du på nuværende tidspunkt med denne type job?
+        </label></p><h6 style="color: brown;">{{bookedHoursError}}</h6>
+        <input id="bookedHours" type="number" formControlName="bookedHours">
+      </div>
+    <div>
+        <p><label for="description">
+          Dine personlige egenskaber:
+        </label></p><h6 style="color: brown;">{{descriptionError}}</h6>
+        <textarea id="description" type="text" formControlName="description" rows="10" cols="100"></textarea>
+      </div>
+    <div>
+      <p><label for="techBackground">
+        Din tekniske erfaring:
+      </label></p><h6 style="color: brown;">{{techBackgroundError}}</h6>
+      <textarea id="techBackground" type="text" formControlName="techBackground" rows="10" cols="100"></textarea>
+    </div>
+      <button type="submit" class="button" [disabled]="!cvAddForm.valid">Gem</button>
+      <p  style="display: inline;"> ( Du kan tilføje andet til dit CV efter det er gemt )</p>
+  </form>
+</div>
+<div *ngIf="submitted"><h2>Du kan nu bygge videre på dit CV</h2> <button class="button" (click)="setSubmittedFalse()">Opret et CV mere</button></div>
+
+  

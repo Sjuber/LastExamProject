@@ -1,0 +1,25 @@
+button {
+    background-color: rgb(69, 46, 218);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: 2px solid rgb(69, 46, 218);
+    cursor: pointer;
+    width: 200px !important;
+  }
+  button:hover {
+    opacity: 0.8;
+  }
+  .to_safe{
+    position: right;
+    background-color: transparent;
+    color: rgb(69, 46, 218);
+  }
+  .to_safe:hover{
+    background-color: rgba(69, 46, 218, 0.467);
+    color:white;
+  }
+  .error{
+    color:brown;
+  }
+
