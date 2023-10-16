@@ -3,6 +3,7 @@ package com.CVP.cv_project.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class CV implements Cloneable {
     private int maxHours;
     private String description;
     private String techBackground;
+
+    private Timestamp last_updated;
+
     //@Enumerated(EnumType.STRING)
    // @Transient
     //@Column(name = "cvState")
@@ -117,6 +121,10 @@ public class CV implements Cloneable {
     public void setAuthor(User author) {
         this.author = author;
     }
+
+    public Timestamp getLastUpdated() {return last_updated;}
+
+    public void setLastUpdated() {this.last_updated = last_updated;}
 
     public User getConsultant() {
         return consultant;

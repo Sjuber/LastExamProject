@@ -24,6 +24,9 @@ public interface CVRepository extends PagingAndSortingRepository<CV,Integer> {
     @Query("SELECT cv FROM CV cv WHERE cv.cvState = 'Udgivet'")
     List<CV> findAllPublished();
 
+    @Query("SELECT cv FROM CV cv ORDER BY cv.id ASC")
+    List<CV> getAllCVs();
+
     @Query("SELECT cv FROM CV cv JOIN User cons ON  cv.consultant.id = cons.id JOIN User author ON cv.author.id = author.id WHERE " +
             "cons.name = :#{#simpleCV.consultantName} " +
             "and cons.email= :#{#simpleCV.consultantEmail} " +

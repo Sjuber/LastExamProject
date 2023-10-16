@@ -9,9 +9,13 @@ import com.CVP.cv_project.handlers.BestMatchOfCVHandler;
 import com.CVP.cv_project.handlers.SearchFeaturesListObject;
 import com.CVP.cv_project.handlers.SortByHandler;
 import com.CVP.cv_project.repos.*;
+import com.CVP.cv_project.resources.CVResource;
 import com.github.dockerjava.api.exception.NotFoundException;
 import net.minidev.asm.ex.NoSuchFieldException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,10 +23,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.rmi.NoSuchObjectException;
+import java.sql.Timestamp;
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.util.*;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 @Service
+@EnableScheduling
+@Configuration
 public class CVService {
 
     @Autowired
@@ -54,6 +63,7 @@ public class CVService {
 
     private static final MappingUtils mappingUtils = new MappingUtils();
 
+    Logger log = LoggerFactory.getLogger(CVService.class);
 
     public CV createOriginalCV(CV cvToCreate) throws NoSuchObjectException, NoSuchFieldException {
         if (cvToCreate.equals(null)) {
@@ -73,6 +83,41 @@ public class CVService {
     public CV getCVByCVID(int cViD){
         return cvRepository.findById(cViD).get();
     }
+
+    public boolean isCVTooOld(int cvId, int maxAgeInMinutes) {
+        //We aquire the cv so that we may pull data out of it
+        CV cv = getCVByCVID(cvId);
+        if (cv == null){
+            return false;
+        }
+        //This aquires the timestamp of lastUpdated
+        Timestamp timeOfLastUpdate = cv.getLastUpdated();
+        //We calculate the two against eachother
+        long millisecondsAboveLimit = Timestamp.from(Instant.now()).getTime() - timeOfLastUpdate.getTime();
+        //  log.info("millisecondsAboveLimit: " + millisecondsAboveLimit +" is the time from 1970: " + Timestamp.from(Instant.now()).getTime() + " minus the amount of time up until the last update: " + timeOfLastUpdate.getTime());
+        long minutesAboveLimit = millisecondsAboveLimit / 60000;
+        //log.info("The result of " + millisecondsAboveLimit + " turned into minutes is " + minutesAboveLimit);
+        //Here the function tests if the minutes above the limit is greater than the maxAgeInMinutes
+        log.info("Here we test if " + minutesAboveLimit + " is passed by " + maxAgeInMinutes);
+
+        if (minutesAboveLimit >= maxAgeInMinutes) {
+            log.info("CVID " + cvId + " MUST BE UPDATED SOON >:O \n\n");
+        } else {
+            log.info("CVID " + cvId + " checks out, and doesent need updating right now + :>) \n\n");
+        }
+
+        return minutesAboveLimit >= maxAgeInMinutes;
+
+        //If true, then the cv is too old, if false, the cv is young enough
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void checkIfTime() {
+        //log.info(cvRepository.getAllCVs().toString());
+        cvRepository.getAllCVs().forEach((n) -> isCVTooOld(n.getId(),60));
+        //boolean checkAge = isCVTooOld(8, 60);
+    }
+
 
     public List<CV> getAllOrignalCVsForUserByPhone(String phone) throws NoSuchFieldException {
         List<CV> originalCVs = new ArrayList<>();

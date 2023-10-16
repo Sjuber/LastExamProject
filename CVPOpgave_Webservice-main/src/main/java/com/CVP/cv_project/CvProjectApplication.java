@@ -1,5 +1,6 @@
 package com.CVP.cv_project;
 
+import com.CVP.cv_project.services.CVService;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,8 +14,11 @@ public class CvProjectApplication {
 		return new ModelMapper();
 	}
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(CvProjectApplication.class, args);
+		CVService cvSrvc = new CVService();
+		cvSrvc.checkIfTime();
 	}
 
 }
