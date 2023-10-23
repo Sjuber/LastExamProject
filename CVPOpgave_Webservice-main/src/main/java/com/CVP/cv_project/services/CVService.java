@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.rmi.NoSuchObjectException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -98,14 +99,15 @@ public class CVService {
         long minutesAboveLimit = millisecondsAboveLimit / 60000;
         //log.info("The result of " + millisecondsAboveLimit + " turned into minutes is " + minutesAboveLimit);
         //Here the function tests if the minutes above the limit is greater than the maxAgeInMinutes
-        log.info("Here we test if " + minutesAboveLimit + " is passed by " + maxAgeInMinutes);
+        //log.info("Here we test if " + minutesAboveLimit + " is passed by " + maxAgeInMinutes);
 
         if (minutesAboveLimit >= maxAgeInMinutes) {
-            log.info("CVID " + cvId + " MUST BE UPDATED SOON >:O \n\n");
-        } else {
+            log.info("CVID " + cvId + " must be updated soon since " + minutesAboveLimit + " passes " + maxAgeInMinutes);
+        }
+        /*else {
             log.info("CVID " + cvId + " checks out, and doesent need updating right now + :>) \n\n");
         }
-
+        */
         return minutesAboveLimit >= maxAgeInMinutes;
 
         //If true, then the cv is too old, if false, the cv is young enough
@@ -181,6 +183,7 @@ public class CVService {
         cvDB.setMaxHours(cvEditedTo.getMaxHours());
         cvDB.setDescription(cvEditedTo.getDescription());
         cvDB.setTechBackground(cvEditedTo.getTechBackground());
+        cvDB.setLastUpdated();
         return cvRepository.save(cvDB);
     }
 

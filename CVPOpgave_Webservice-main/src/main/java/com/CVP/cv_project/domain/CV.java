@@ -1,9 +1,11 @@
 package com.CVP.cv_project.domain;
 
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.Now;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +126,8 @@ public class CV implements Cloneable {
 
     public Timestamp getLastUpdated() {return last_updated;}
 
-    public void setLastUpdated() {this.last_updated = last_updated;}
+    public void setLastUpdated()
+    {this.last_updated = Timestamp.from(Instant.now());}
 
     public User getConsultant() {
         return consultant;
