@@ -30,11 +30,17 @@ import java.time.Instant;
 import java.util.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 @Service
 @EnableScheduling
 @Configuration
 public class CVService {
 
+    @Autowired
+    private JavaMailSender mailSender;
     @Autowired
     private CVRepository cvRepository;
     @Autowired
@@ -102,6 +108,9 @@ public class CVService {
         //log.info("Here we test if " + minutesAboveLimit + " is passed by " + maxAgeInMinutes);
 
         if (minutesAboveLimit >= maxAgeInMinutes) {
+            sendEmailReminder(cv.getAuthor().getEmail(),
+                    cv.getAuthor().getName() + ", your CV is in need of updating",
+                    "You CV in our database is in need of updating, it was last updated: " + cv.getLast_updated().toString());
             log.info("CVID " + cvId + " must be updated soon since " + minutesAboveLimit + " passes " + maxAgeInMinutes);
         }
         /*else {
@@ -113,12 +122,27 @@ public class CVService {
         //If true, then the cv is too old, if false, the cv is young enough
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 6000000) // checks roughly every 2 months or above
     public void checkIfTime() {
         //log.info(cvRepository.getAllCVs().toString());
-        cvRepository.getAllCVs().forEach((n) -> isCVTooOld(n.getId(),60));
+        cvRepository.getAllCVs().forEach((n) ->
+                isCVTooOld(n.getId(),87600));
+        log.info("Attempt at sending an email has been made");
         //boolean checkAge = isCVTooOld(8, 60);
     }
+
+public void sendEmailReminder(String to, String subject, String body){
+        /*If the entry hasent been updated in a long time, then an email is sent
+        * to the user who owns the CV.
+        * It is as Shrimple as that. */
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setFrom("doomj9700@gmail.com"); // The email that sends the mail to people
+    message.setTo(to);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
 
 
     public List<CV> getAllOrignalCVsForUserByPhone(String phone) throws NoSuchFieldException {
