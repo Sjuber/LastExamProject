@@ -135,17 +135,19 @@ export class GetUserCVsComponent implements OnInit {
     this.cvsService.print_CV_As_PDF(this.originalCV?.id).subscribe((CeeVee) => {
       const doc = new jsPDF();
       // @ts-ignore: Unreachable code error
-      doc.text("CV \n Name: " + 
-      CeeVee.authorDTO?.name
-      + "\n Email: " +
+      doc.text("\nCV \n\n\n Navn: " +
+      CeeVee.title
+      + "\n\n Email: " +
       CeeVee.authorDTO?.email
-      + "\n Phone: " +
-      CeeVee.authorDTO?.phone
-      + "\n Max Weekly Hour: " +
+      + "\n\n Teknisk Baggrund: " +
+      CeeVee.techBackground
+      + "\n\n Bookede timer: " +
+      CeeVee.bookedHours
+      + "\n\n Max Ugentlige Timer: " +
       CeeVee.maxHours
-      + "\n Jobs: " +
-      CeeVee.jobs.every.toString()
-        ,5,5);
+      + "\n\n Deskription: " +
+      CeeVee.description
+      ,5,5);
       doc.save("CVPDF.pdf");
       console.log(CeeVee);});
     

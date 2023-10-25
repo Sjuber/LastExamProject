@@ -6,6 +6,7 @@ import { Job } from "./job";
 import { PractisedLanguage } from "./practisedLanguage";
 import { Project } from "./project";
 import { User } from "./user";
+import { Timestamp } from "rxjs";
 
 export class CV{
   
@@ -25,7 +26,7 @@ export class CV{
     educations:Education[];
     projects?:Project[];
      title?:string;
-    constructor(
+     constructor(
       
       bookedHours:number,
       maxHours:number,
